@@ -7549,6 +7549,11 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 		int len = 0;
 		uint8_t* guid = m_dbgprot_decode_byte_array (p, &p, end, &len);
 		MonoAssembly *assembly = NULL;
+		/* A module GUID is exactly 16 bytes; reject null/negative/odd-sized arrays */
+		if (!guid || len != 16) {
+			g_free (guid);
+			return ERR_INVALID_ARGUMENT;
+		}
 		GPtrArray *assemblies = mono_alc_get_all_loaded_assemblies ();
 		for (guint i = 0; i < assemblies->len; ++i) {
 			MonoAssembly *assemblyOnALC = (MonoAssembly*)g_ptr_array_index (assemblies, i);
