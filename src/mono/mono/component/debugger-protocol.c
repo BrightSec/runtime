@@ -89,6 +89,7 @@ m_dbgprot_decode_string (uint8_t *buf, uint8_t **endbuf, uint8_t *limit)
 		return NULL;
 	}
 
+	g_assert (len <= limit - buf);
 	s = (char *)g_malloc (len + 1);
 	g_assert (s);
 
@@ -111,6 +112,7 @@ m_dbgprot_decode_string_with_len(uint8_t* buf, uint8_t** endbuf, uint8_t* limit,
 		return NULL;
 	}
 
+	g_assert (*len <= limit - buf);
 	s = (char*)g_malloc(*len + 1);
 	g_assert(s);
 
@@ -133,6 +135,7 @@ m_dbgprot_decode_byte_array (uint8_t *buf, uint8_t **endbuf, uint8_t *limit, int
 		return NULL;
 	}
 
+	g_assert (*len <= limit - buf);
 	s = (uint8_t*)g_malloc (*len);
 	g_assert (s);
 
