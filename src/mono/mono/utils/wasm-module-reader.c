@@ -80,6 +80,8 @@ visit_section (const uint8_t *ptr, const uint8_t *boundp, const uint8_t **endp, 
 		return FALSE;
 
 	*should_stop = FALSE;
+	if (sec_size > (size_t)(boundp - ptr))
+		return FALSE;
 	gboolean success = visitor->section_visitor (code, ptr, sec_size, user_data, should_stop);
 	*endp = ptr + sec_size; // advance past the section payload
 	return success;

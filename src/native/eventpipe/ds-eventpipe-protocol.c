@@ -344,7 +344,7 @@ eventpipe_collect_tracing_command_try_parse_event_ids (
 	if (event_ids_len == 0)
 		return true;
 
-	*event_ids = ep_rt_object_array_alloc (uint32_t, event_ids_len);
+	*event_ids = (event_ids_len <= *buffer_len / sizeof (uint32_t)) ? ep_rt_object_array_alloc (uint32_t, event_ids_len) : NULL; /* each id is 4 bytes; reject counts exceeding the remaining buffer */
 	ep_raise_error_if_nok (*event_ids != NULL);
 	for (uint32_t i = 0; i < event_ids_len; ++i)
 		ep_raise_error_if_nok (ds_ipc_message_try_parse_uint32_t (buffer, buffer_len, &(*event_ids)[i]));
@@ -423,7 +423,7 @@ eventpipe_collect_tracing_command_try_parse_tracepoint_sets (
 	if (tracepoint_sets_len == 0)
 		return true;
 
-	*tracepoint_sets = ep_rt_object_array_alloc (EventPipeProviderTracepointSet, tracepoint_sets_len);
+	*tracepoint_sets = (tracepoint_sets_len <= *buffer_len / 8) ? ep_rt_object_array_alloc (EventPipeProviderTracepointSet, tracepoint_sets_len) : NULL; /* each set is at least 8 bytes */
 	ep_raise_error_if_nok (*tracepoint_sets != NULL);
 
 	for (uint32_t i = 0; i < tracepoint_sets_len; ++i) {

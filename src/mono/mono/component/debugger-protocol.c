@@ -58,7 +58,7 @@ m_dbgprot_decode_int (uint8_t *buf, uint8_t **endbuf, uint8_t *limit)
 {
 	*endbuf = buf + 4;
 	g_assert (*endbuf <= limit);
-	return (((int)buf [0]) << 24) | (((int)buf [1]) << 16) | (((int)buf [2]) << 8) | (((int)buf [3]) << 0);
+	return (int)((((uint32_t)buf [0]) << 24) | (((uint32_t)buf [1]) << 16) | (((uint32_t)buf [2]) << 8) | (((uint32_t)buf [3]) << 0));
 }
 
 int64_t
@@ -89,7 +89,11 @@ m_dbgprot_decode_string (uint8_t *buf, uint8_t **endbuf, uint8_t *limit)
 		return NULL;
 	}
 
-	s = (char *)g_malloc (len + 1);
+	if (buf > limit || len > limit - buf) {
+		*endbuf = buf;
+		return NULL;
+	}
+	s = (char *)g_malloc ((size_t)len + 1);
 	g_assert (s);
 
 	memcpy (s, buf, len);
@@ -111,7 +115,12 @@ m_dbgprot_decode_string_with_len(uint8_t* buf, uint8_t** endbuf, uint8_t* limit,
 		return NULL;
 	}
 
-	s = (char*)g_malloc(*len + 1);
+	if (buf > limit || *len > limit - buf) {
+		*len = -1;
+		*endbuf = buf;
+		return NULL;
+	}
+	s = (char*)g_malloc((size_t)*len + 1);
 	g_assert(s);
 
 	memcpy(s, buf, *len);
@@ -133,6 +142,11 @@ m_dbgprot_decode_byte_array (uint8_t *buf, uint8_t **endbuf, uint8_t *limit, int
 		return NULL;
 	}
 
+	if (buf > limit || *len > limit - buf) {
+		*len = -1;
+		*endbuf = buf;
+		return NULL;
+	}
 	s = (uint8_t*)g_malloc (*len);
 	g_assert (s);
 
