@@ -1593,7 +1593,8 @@ assembly_name_to_aname (MonoAssemblyName *assembly, char *p)
 			p += 7;
 			while (*p && *p != '=')
 				p++;
-			p++;
+			if (*p == '=')
+				p++;
 			while (*p && g_ascii_isspace (*p))
 				p++;
 			assembly->major = strtoul (p, &s, 10);
@@ -1617,7 +1618,8 @@ assembly_name_to_aname (MonoAssemblyName *assembly, char *p)
 			p += 7;
 			while (*p && *p != '=')
 				p++;
-			p++;
+			if (*p == '=')
+				p++;
 			while (*p && g_ascii_isspace (*p))
 				p++;
 			if ((g_ascii_strncasecmp (p, "neutral", 7) == 0) && (p [7] == ' ' || p [7] == ',')) {
@@ -1636,7 +1638,8 @@ assembly_name_to_aname (MonoAssemblyName *assembly, char *p)
 			p += 14;
 			while (*p && *p != '=')
 				p++;
-			p++;
+			if (*p == '=')
+				p++;
 			while (*p && g_ascii_isspace (*p))
 				p++;
 			if (strncmp (p, "null", 4) == 0) {
