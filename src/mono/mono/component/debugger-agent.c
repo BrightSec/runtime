@@ -7092,6 +7092,9 @@ valid_memory_address (gpointer addr, gint size)
 static MonoAssembly*
 find_assembly_by_name (char* assembly_name)
 {
+	if (!assembly_name)
+		return NULL;
+
 	//we get 'foo.dll' but mono_assembly_load expects 'foo' so we strip the last dot
 	char *lookup_name = g_strdup (assembly_name);
 	for (int i = ((int)strlen (lookup_name) - 1); i >= 0; --i) {
@@ -7539,6 +7542,8 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 	}
 	case MDBGPROT_CMD_GET_ASSEMBLY_BY_NAME: {
 		char* assembly_name = decode_string (p, &p, end);
+		if (!assembly_name)
+			return ERR_INVALID_ARGUMENT;
 		MonoAssembly* assembly = find_assembly_by_name (assembly_name);
 		if (!assembly)
 			buffer_add_int (buf, -1);
